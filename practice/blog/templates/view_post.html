@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Пост{% endblock %}
+
+{% block content %}
+<div class="card mb-3">
+    <div class="card-body">
+    {% if post.request_only and post.author != current_user %}
+        <p><em>Это скрытый пост.</em></p>
+    {% elif post.request_only and post.author == current_user %}
+            <small><i>Этот пост был скрыт по Вашему запросу и виден только Вам.</i></small>
+            <p>{{ post.content }}</p>
+    {% else %}
+        <p>{{ post.content }}</p>
+    {% endif %}
+        <small>Автор: {{ post.author.username }} | {{ post.date_posted.strftime('%Y-%m-%d %H:%M') }}</small><br>
+        {% for tag in post.tags %}
+            <a href="{{ url_for('posts_by_tag', tag_name=tag.name) }}" class="badge bg-secondary">{{ tag.name }}</a>
+        {% endfor %}
+    </div>
+</div>
+
+{% if post.request_only and post.author != current_user %}
+    <h4>Комментарии недоступны под скрытым постом.</h4>
+{% else %}
+    <h4>Комментарии</h4>
+    {% for comment in post.comments %}
+        <div class="mb-2 p-2 border">
+            <strong>{{ comment.author.username }}</strong>: {{ comment.content }}<br>
+            <small class="text-muted">{{ comment.date_posted.strftime('%Y-%m-%d %H:%M') }}</small>
+        </div>
+        <br>
+    {% endfor %}
+
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        <div class="mb-3">
+            {{ form.content(class="form-control") }} {{ form .submit(class="btn btn-primary") }}
+        </div>
+
+    </form>
+{% endif %}
+{% endblock %}
