@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Запросы на доступ{% endblock %}
+
+{% block content %}
+<h2>Запросы на доступ</h2>
+{% if requests %}
+<ul>
+  {% for req in requests %}
+    <li>
+      <strong>{{ req.requester.username }}</strong> просит доступ к 
+      <a href="{{ url_for('view_post', post_id=req.post.id) }}">{{ req.post.content[:30] }}...</a>
+      <form method="POST" action="{{ url_for('grant_access', request_id=req.id) }}" style="display:inline;">
+        <button type="submit">Одобрить</button>
+      </form>
+    </li>
+  {% endfor %}
+</ul>
+{% else %}
+<p>Нет новых запросов.</p>
+{% endif %}
+{% endblock %}
